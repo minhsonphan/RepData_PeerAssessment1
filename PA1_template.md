@@ -187,11 +187,19 @@ dfActivityWithFilledSteps$weekday <- as.factor(ifelse(weekdays(as.Date(dfActivit
 ## Make a panel plot containing a time series plot of the 5-minute interval (x-axis) 
 ## and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
 dfAverageActivityPerTypeOfDay <- aggregate(steps ~ weekday+interval, dfActivityWithFilledSteps, mean)
-dfAverageActivityPerWeekday <- dfAverageActivityPerTypeOfDay[dfAverageActivityPerTypeOfDay$weekday == "weekday",]
-dfAverageActivityPerWeekend <- dfAverageActivityPerTypeOfDay[dfAverageActivityPerTypeOfDay$weekday == "weekend",]
-par(mfrow=c(1,2))
-with(dfAverageActivityPerWeekday,plot(x=interval, y=steps, type="l", xlab="5-minute interval", ylab="Average number of steps across weekdays", ylim=c(0, 230)))
-with(dfAverageActivityPerWeekend,plot(x=interval, y=steps, type="l", xlab="5-minute interval", ylab="Average number of steps across weekends", ylim=c(0, 230)))
+library(ggplot2)
+```
+
+```
+## Registered S3 methods overwritten by 'ggplot2':
+##   method         from 
+##   [.quosures     rlang
+##   c.quosures     rlang
+##   print.quosures rlang
+```
+
+```r
+ggplot(dfAverageActivityPerTypeOfDay , aes(x = interval , y = steps, color=weekday)) + geom_line() + labs(title = "Avg. Daily Steps by Weektype", x = "Interval", y = "No. of Steps") + facet_wrap(~ weekday , ncol = 1, nrow=2)
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->

@@ -145,11 +145,9 @@ dfActivityWithFilledSteps$weekday <- as.factor(ifelse(weekdays(as.Date(dfActivit
 ## Make a panel plot containing a time series plot of the 5-minute interval (x-axis) 
 ## and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
 dfAverageActivityPerTypeOfDay <- aggregate(steps ~ weekday+interval, dfActivityWithFilledSteps, mean)
-dfAverageActivityPerWeekday <- dfAverageActivityPerTypeOfDay[dfAverageActivityPerTypeOfDay$weekday == "weekday",]
-dfAverageActivityPerWeekend <- dfAverageActivityPerTypeOfDay[dfAverageActivityPerTypeOfDay$weekday == "weekend",]
-par(mfrow=c(1,2))
-with(dfAverageActivityPerWeekday,plot(x=interval, y=steps, type="l", xlab="5-minute interval", ylab="Average number of steps across weekdays", ylim=c(0, 230)))
-with(dfAverageActivityPerWeekend,plot(x=interval, y=steps, type="l", xlab="5-minute interval", ylab="Average number of steps across weekends", ylim=c(0, 230)))
+library(ggplot2)
+
+ggplot(dfAverageActivityPerTypeOfDay , aes(x = interval , y = steps, color=weekday)) + geom_line() + labs(title = "Avg. Daily Steps by Weektype", x = "Interval", y = "No. of Steps") + facet_wrap(~ weekday , ncol = 1, nrow=2)
 ```
 
 The plots show that **there are differences in activity patterns between weekdays and weekends**. As a matter of a fact, **during the weekdays, there is a peak of activity between 8am and 10am** which could be due to the fact that people go to their office or shools. **During the weekends, the activity is lower between 8am and 10 am but is higher for the rest of the day**. This can be explained by the fact that during weekends, people have their recreational activities (sports, shopping, museum, ...) and therefore, after 10am, walk more than during the weekdays. 
