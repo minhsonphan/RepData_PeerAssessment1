@@ -7,9 +7,7 @@ output:
     keep_md: true
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 
 ## Introduction
 
@@ -49,7 +47,8 @@ Our approach consists in:
 
     + Histogram of the total number of steps taken each day
 
-```{r}
+
+```r
 ## Loading and preprocessing the data
 dfActivity <- read.csv("activity.csv", header = TRUE, sep= ",")
 
@@ -57,26 +56,42 @@ dfActivityPerDay <- aggregate(steps ~ date, dfActivity, sum)
 hist(dfActivityPerDay$steps, main="", xlab="Total number of steps per day", ylab="Frequency", col="Red")        
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
+
     + Mean and median of the total number of steps taken per day
 
-```{r}
+
+```r
 summary(dfActivityPerDay$steps)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##      41    8841   10765   10766   13294   21194
 ```
 
 ## 2. Analysis of the 5-minute intervals and the average number of steps taken, averaged across all days
 
     + Time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-```{r}
+
+```r
 dfAverageActivityPerInterval <- aggregate(steps ~ interval, dfActivity, mean)
 with(dfAverageActivityPerInterval,plot(x=interval, y=steps, type="l", xlab="5-minute interval", ylab="Average number of steps across all days"))
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
 
     + 5-minute interval containing the maximum number of steps on average across all the days in the dataset
 
-```{r}
+
+```r
 dfAverageActivityPerInterval$interval[which.max(dfAverageActivityPerInterval$steps)]
+```
+
+```
+## [1] 835
 ```
 
 
@@ -85,10 +100,19 @@ dfAverageActivityPerInterval$interval[which.max(dfAverageActivityPerInterval$ste
 
     + In order to fill in all of the missing values in the dataset, we use the mean for the corresponding 5-minute interval
 
-```{r}
+
+```r
 ## Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NA)
 table(is.na(dfActivity$steps))
+```
 
+```
+## 
+## FALSE  TRUE 
+## 15264  2304
+```
+
+```r
 ## We use the mean for the corresponding 5-minute interval
 ## Create a new dataset that is equal to the original dataset but with the missing data filled in.
 dfActivityWithFilledSteps <- dfActivity 
@@ -102,30 +126,47 @@ for (i in rownames(dfActivityStepsNotFilled)){
 
     + Histogram of the total number of steps taken each day (with missing value filled for steps)
 
-```{r}
+
+```r
 dfActivityPerDayWithFilledSteps <- aggregate(steps ~ date, dfActivityWithFilledSteps, sum)
 hist(dfActivityPerDayWithFilledSteps$steps, main="", xlab="Total number of steps per day", ylab="Frequency", col="Red")        
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+
 
     + Mean and median total number of steps taken per day. 
-```{r}
+
+```r
 summary(dfActivityPerDayWithFilledSteps$steps)
 ```
 
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##      41    9819   10766   10766   12811   21194
+```
+
 **These values differ from the estimates from the first part of the assignment.** Here is a comparison between the 2 histograms: 
-```{r}
+
+```r
 par(mfrow=c(1,2))
 Hist1 <- hist(dfActivityPerDay$steps, main="without missing values filled", xlab="Total number of steps per day", ylab="Frequency", col="Red", ylim=c(0, 35))        
 Hist2 <- hist(dfActivityPerDayWithFilledSteps$steps, main="with missing value filled", xlab="Total number of steps per day", ylab="Frequency", col="Blue")        
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+
 The impact of imputing missing data on the estimates of the total daily number of steps is an increase of the maximum value of the frequency of the interval corresponding to the 15000 steps by :
-```{r}
+
+```r
 Max1 <- Hist1$counts[which.max(Hist1$counts)]
 Max2 <- Hist2$counts[which.max(Hist2$counts)]
 Impact <- (Max2 - Max1)/Max1*100
 paste(round(Impact, 2), "%", sep="")
+```
+
+```
+## [1] "28.57%"
 ```
 
 
@@ -136,7 +177,8 @@ paste(round(Impact, 2), "%", sep="")
 
     + Panel plot containing a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
 
-```{r}
+
+```r
 ## Use the dataset with the filled-in missing values for this part.
 ## Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating 
 dfActivityWithFilledSteps$weekday <- as.factor(ifelse(weekdays(as.Date(dfActivityWithFilledSteps$date)) %in% c("samedi", "dimanche"), "weekend", "weekday"))
@@ -151,5 +193,7 @@ par(mfrow=c(1,2))
 with(dfAverageActivityPerWeekday,plot(x=interval, y=steps, type="l", xlab="5-minute interval", ylab="Average number of steps across weekdays", ylim=c(0, 230)))
 with(dfAverageActivityPerWeekend,plot(x=interval, y=steps, type="l", xlab="5-minute interval", ylab="Average number of steps across weekends", ylim=c(0, 230)))
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 The plots show that **there are differences in activity patterns between weekdays and weekends**. As a matter of a fact, **during the weekdays, there is a peak of activity between 8am and 10am** which could be due to the fact that people go to their office or shools. **During the weekends, the activity is lower between 8am and 10 am but is higher for the rest of the day**. This can be explained by the fact that during weekends, people have their recreational activities (sports, shopping, museum, ...) and therefore, after 10am, walk more than during the weekdays. 
